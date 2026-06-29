@@ -1,0 +1,6 @@
+{
+  "name": "Care Beyond Borders",
+  "description": "Premium, modern, bilingual website and online membership application system for Care Beyond Borders, providing insurance, funeral cover, and medical transport from South Africa to Inhambane, Mozambique.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
