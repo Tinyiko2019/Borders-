@@ -6,7 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Globe, Phone, FileText, LayoutDashboard, ShieldCheck } from 'lucide-react';
 import { translations, Language } from '../translations';
-import cbbLogo from '../assets/images/cbb_logo.jpg';
+import { getImageUrl } from '../types';
 
 interface NavbarProps {
   lang: Language;
@@ -83,7 +83,7 @@ export default function Navbar({ lang, setLang, isAdminView, setIsAdminView, onN
           >
             <div className="relative w-12 h-12 bg-slate-950 rounded-full p-1 shadow-inner overflow-hidden flex items-center justify-center border-2 border-gold-500">
               <img 
-                src={cbbLogo} 
+                src={getImageUrl('/cbb_logo.jpg')} 
                 alt="Care Beyond Borders Logo" 
                 className="object-contain w-full h-full scale-110"
                 referrerPolicy="no-referrer"

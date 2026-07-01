@@ -7,8 +7,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Shield, ArrowRight, PlaneTakeoff, CheckCircle2, FileHeart } from 'lucide-react';
 import { Language, translations } from '../translations';
-import happyFamily from '../assets/images/happy_family.jpg';
-import routeMap from '../assets/images/route_map.jpg';
+import { getImageUrl } from '../types';
 
 interface HeroProps {
   lang: Language;
@@ -19,7 +18,14 @@ export default function Hero({ lang, onNavigate }: HeroProps) {
   const t = translations[lang];
 
   return (
-    <section id="home" className="relative bg-navy-900 pt-32 pb-16 md:py-40 overflow-hidden min-h-[90vh] flex items-center">
+    <section 
+      id="home" 
+      className="relative bg-navy-900 pt-32 pb-16 md:py-40 overflow-hidden min-h-[90vh] flex items-center bg-cover bg-center bg-no-repeat hero-bg"
+      style={{
+        '--hero-bg-mobile': `linear-gradient(rgba(10, 29, 55, 0.90), rgba(10, 29, 55, 0.94)), url("${getImageUrl('/background_hero_mobile.jpg')}")`,
+        '--hero-bg-desktop': `linear-gradient(rgba(10, 29, 55, 0.90), rgba(10, 29, 55, 0.94)), url("${getImageUrl('/background_hero.jpg')}")`,
+      } as React.CSSProperties}
+    >
       {/* Decorative Golden Ambient Gradients */}
       <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[60%] rounded-full bg-gold-500/10 blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[50%] rounded-full bg-gold-500/5 blur-[120px] pointer-events-none"></div>
@@ -142,7 +148,7 @@ export default function Hero({ lang, onNavigate }: HeroProps) {
               {/* Main Visual Image - Happy African Family */}
               <div className="aspect-[4/3] w-full bg-navy-950 relative">
                 <img 
-                  src={happyFamily} 
+                  src={getImageUrl('/happy_family.jpg')} 
                   alt="Happy family protected by Care Beyond Borders" 
                   className="object-cover w-full h-full mix-blend-normal hover:scale-105 transition-transform duration-700 ease-out"
                   referrerPolicy="no-referrer"
@@ -176,7 +182,7 @@ export default function Hero({ lang, onNavigate }: HeroProps) {
               className="absolute -top-6 -right-6 w-32 h-32 md:w-40 md:h-40 bg-white rounded-2xl p-2 shadow-2xl border-2 border-navy-500 overflow-hidden hidden sm:block"
             >
               <img 
-                src={routeMap} 
+                src={getImageUrl('/route_map.jpg')} 
                 alt="Map Route South Africa to Mozambique" 
                 className="w-full h-full object-cover rounded-xl"
                 referrerPolicy="no-referrer"

@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { ShieldCheck, Heart, MapPin, Phone, Mail, X } from 'lucide-react';
 import { Language, translations } from '../translations';
-import cbbLogo from '../assets/images/cbb_logo.jpg';
+import { getImageUrl } from '../types';
 
 interface FooterProps {
   lang: Language;
@@ -41,7 +41,7 @@ export default function Footer({ lang, onNavigateToSection }: FooterProps) {
               {/* Actual Brand Logo */}
               <div className="w-11 h-11 bg-slate-950 rounded-full p-1 shadow border border-gold-500 overflow-hidden flex items-center justify-center">
                 <img 
-                  src={cbbLogo} 
+                  src={getImageUrl('/cbb_logo.jpg')} 
                   alt="Care Beyond Borders Logo" 
                   className="object-contain w-full h-full scale-110"
                   referrerPolicy="no-referrer"

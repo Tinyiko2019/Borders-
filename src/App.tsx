@@ -15,6 +15,8 @@ import Team from './components/Team';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import AdminPortal from './components/AdminPortal';
+import Gallery from './components/Gallery';
+import Testimonials from './components/Testimonials';
 import { Language } from './translations';
 import { MessageSquare, ArrowUp } from 'lucide-react';
 
@@ -23,6 +25,7 @@ export default function App() {
   const [view, setView] = useState<'site' | 'admin'>('site');
   const [selectedPlanId, setSelectedPlanId] = useState<'individual' | 'family' | 'senior'>('individual');
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
 
   // Monitor scroll height to display Back-To-Top button
   useEffect(() => {
@@ -33,12 +36,25 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Monitor path changes
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentPath(window.location.pathname);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   const toggleLanguage = () => {
     setLang(prev => (prev === 'en' ? 'pt' : 'en'));
   };
 
   const handleSelectPlan = (planId: 'individual' | 'family' | 'senior') => {
     setSelectedPlanId(planId);
+    if (currentPath === '/contact' || currentPath.endsWith('/contact')) {
+      window.history.pushState({}, '', './');
+      setCurrentPath('/');
+    }
     // Scroll smoothly to application form section
     const applySection = document.getElementById('apply');
     if (applySection) {
@@ -48,6 +64,10 @@ export default function App() {
 
   const navigateToSection = (sectionId: string) => {
     setView('site');
+    if (currentPath === '/contact' || currentPath.endsWith('/contact')) {
+      window.history.pushState({}, '', './');
+      setCurrentPath('/');
+    }
     // Allow React time to mount the elements if switching from admin view
     setTimeout(() => {
       const element = document.getElementById(sectionId);
@@ -93,6 +113,9 @@ export default function App() {
           {/* Detailed logistics services */}
           <Services lang={lang} />
 
+          {/* Our Operational Gallery */}
+          <Gallery lang={lang} />
+
           {/* Premium pricing and plan tiers */}
           <Plans 
             lang={lang} 
@@ -112,6 +135,9 @@ export default function App() {
 
           {/* Staff directory & contact details */}
           <Team lang={lang} />
+
+          {/* Member Testimonials */}
+          <Testimonials lang={lang} />
 
           {/* Physical Address & messages inbox form */}
           <Contact lang={lang} />

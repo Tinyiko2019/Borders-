@@ -59,6 +59,16 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Responsive hero background */
+.hero-bg {
+  background-image: var(--hero-bg-mobile);
+}
+@media (min-width: 768px) {
+  .hero-bg {
+    background-image: var(--hero-bg-desktop);
+  }
+}
+
 /* Modern styling tweaks */
 ::selection {
   background-color: #c5a059;

@@ -12,17 +12,22 @@ import { MembershipApplication, ContactMessage, EmailLog } from './src/types';
 const app = express();
 const PORT = 3000;
 
-// Set up JSON parsing with a high limit to accommodate Base64 file uploads & signatures
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
-
-// Custom middleware to correct MIME types for JPEG files named with a .png extension
+// Logging middleware to inspect image requests
+const LOG_FILE = path.join(process.cwd(), 'data', 'requests.log');
 app.use((req, res, next) => {
-  if (req.path.startsWith('/input_file_') && req.path.endsWith('.png')) {
-    res.setHeader('Content-Type', 'image/jpeg');
+  const timestamp = new Date().toISOString();
+  const logLine = `[${timestamp}] ${req.method} ${req.url} - IP: ${req.ip} - User-Agent: ${req.get('user-agent')}\n`;
+  try {
+    fs.appendFileSync(LOG_FILE, logLine);
+  } catch (e) {
+    console.error('Failed to write to requests.log:', e);
   }
   next();
 });
+
+// Set up JSON parsing with a high limit to accommodate Base64 file uploads & signatures
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Always serve public assets directly
 app.use(express.static(path.join(process.cwd(), 'public')));
@@ -306,6 +311,23 @@ async function startServer() {
       appType: 'spa',
     });
     app.use(vite.middlewares);
+
+    app.get('*', async (req, res, next) => {
+      const url = req.originalUrl;
+      try {
+        // Read index.html from root
+        let template = fs.readFileSync(
+          path.resolve(process.cwd(), 'index.html'),
+          'utf-8'
+        );
+        // Apply Vite HTML transforms to inject the dev script and HMR support
+        template = await vite.transformIndexHtml(url, template);
+        res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
+      } catch (e) {
+        vite.ssrFixStacktrace(e as Error);
+        next(e);
+      }
+    });
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));

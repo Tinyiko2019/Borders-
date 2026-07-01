@@ -7,7 +7,8 @@ import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { MapPin, Phone, Mail, MessageSquare, Send, CheckCircle2 } from 'lucide-react';
 import { Language, translations } from '../translations';
-import customerSupport from '../assets/images/customer_support.jpg';
+import { useForm, ValidationError } from '@formspree/react';
+import { getImageUrl } from '../types';
 
 interface ContactProps {
   lang: Language;
@@ -22,11 +23,12 @@ export default function Contact({ lang }: ContactProps) {
   const [phone, setPhone] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  
+  // Use Formspree Hook with Form ID xnjkzlrw
+  const [formspreeState, handleFormspreeSubmit] = useForm('xnjkzlrw');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setStatus('submitting');
 
     const payload = { 
       id: Math.random().toString(36).substring(2, 11),
@@ -48,72 +50,20 @@ export default function Contact({ lang }: ContactProps) {
       console.warn('Error saving message to localStorage:', err);
     }
 
-    // Formspree contact payload
-    const formspreePayload = {
-      _subject: `New Contact Message: ${subject} - ${fullName}`,
-      _replyto: email,
-      email: email,
-      "Full Name": fullName,
-      "Email Address": email,
-      "Phone Number": phone,
-      "Subject": subject,
-      "Message": message,
-      "Date Sent": new Date().toLocaleString()
-    };
-
     try {
-      const formspreeEndpoint = (import.meta as any).env.VITE_FORMSPREE_CONTACT_URL || (import.meta as any).env.VITE_FORMSPREE_URL || 'https://formspree.io/carebeyo@carebeyondborders.co.za';
-
-      const formspreePromise = fetch(formspreeEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(formspreePayload)
-      });
-
-      let apiPromise = Promise.resolve({ ok: true, json: () => Promise.resolve({ success: true }) });
       if (window.location.hostname === 'localhost' || window.location.hostname.includes('run.app')) {
-        apiPromise = fetch('/api/contact', {
+        fetch('/api/contact', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         }).catch(err => {
           console.warn('Local contact API not active, falling back to static mode.', err);
-          return { ok: true, json: () => Promise.resolve({ success: true }) } as any;
         });
       }
+    } catch (err) {}
 
-      const [fsResponse] = await Promise.all([formspreePromise, apiPromise]);
-
-      if (fsResponse.ok) {
-        setStatus('success');
-        setFullName('');
-        setEmail('');
-        setPhone('');
-        setSubject('');
-        setMessage('');
-      } else {
-        // Fallback to success to prevent user friction even if Formspree configuration is still pending verification
-        console.warn('Formspree returned an error response. Falling back to success.');
-        setStatus('success');
-        setFullName('');
-        setEmail('');
-        setPhone('');
-        setSubject('');
-        setMessage('');
-      }
-    } catch (err) {
-      console.error('Error sending message:', err);
-      // Fallback
-      setStatus('success');
-      setFullName('');
-      setEmail('');
-      setPhone('');
-      setSubject('');
-      setMessage('');
-    }
+    // Submit to Formspree
+    await handleFormspreeSubmit(e);
   };
 
   return (
@@ -145,7 +95,7 @@ export default function Contact({ lang }: ContactProps) {
             {/* Customer Support Desk Visual */}
             <div className="bg-white rounded border border-slate-200 overflow-hidden shadow-sm aspect-[16/10] relative group">
               <img 
-                src={customerSupport} 
+                src={getImageUrl('/customer_support.jpg')} 
                 alt="Care Beyond Borders Client Support Desk" 
                 className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500 ease-out"
                 referrerPolicy="no-referrer"
@@ -233,7 +183,7 @@ export default function Contact({ lang }: ContactProps) {
                 <span>{t.contactFormTitle}</span>
               </h3>
 
-              {status === 'success' ? (
+              {formspreeState.succeeded ? (
                 <div className="py-12 text-center space-y-4 animate-fade-in">
                   <div className="w-14 h-14 bg-emerald-50 rounded-full flex items-center justify-center mx-auto border border-emerald-200">
                     <CheckCircle2 className="w-8 h-8 text-emerald-500" />
@@ -242,21 +192,20 @@ export default function Contact({ lang }: ContactProps) {
                   <p className="text-sm text-slate-500 max-w-sm mx-auto">
                     {t.contactFormSuccess}
                   </p>
-                  <button
-                    onClick={() => setStatus('idle')}
-                    className="bg-navy-900 hover:bg-navy-800 text-white font-bold text-xs px-5 py-2.5 rounded-lg cursor-pointer transition-all"
-                  >
-                    Send Another Message
-                  </button>
+                  <p className="text-xs text-emerald-600 font-medium">Thanks for reaching out! We will be in touch soon.</p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
+                  {/* Formspree hidden inputs to capture Form Type */}
+                  <input type="hidden" name="Form Type" value="Contact" />
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Name */}
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold text-navy-500 uppercase tracking-widest block">{t.contactFormName}</label>
                       <input
                         type="text"
+                        name="name"
                         required
                         placeholder="John Doe"
                         value={fullName}
@@ -269,12 +218,14 @@ export default function Contact({ lang }: ContactProps) {
                       <label className="text-xs font-bold text-navy-500 uppercase tracking-widest block">{t.contactFormEmail}</label>
                       <input
                         type="email"
+                        name="email"
                         required
                         placeholder="john@example.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full bg-white border border-slate-300 rounded py-2 px-3 text-sm focus:outline-none focus:ring-1 focus:ring-gold-500 focus:border-gold-500"
                       />
+                      <ValidationError prefix="Email" field="email" errors={formspreeState.errors} className="text-xs text-red-500" />
                     </div>
                   </div>
 
@@ -284,6 +235,7 @@ export default function Contact({ lang }: ContactProps) {
                       <label className="text-xs font-bold text-navy-500 uppercase tracking-widest block">{t.contactFormPhone}</label>
                       <input
                         type="tel"
+                        name="phone"
                         required
                         placeholder="e.g. 071 534 6002"
                         value={phone}
@@ -296,6 +248,7 @@ export default function Contact({ lang }: ContactProps) {
                       <label className="text-xs font-bold text-navy-500 uppercase tracking-widest block">{t.contactFormSubject}</label>
                       <input
                         type="text"
+                        name="subject"
                         required
                         placeholder="Membership inquiry"
                         value={subject}
@@ -309,6 +262,7 @@ export default function Contact({ lang }: ContactProps) {
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-navy-500 uppercase tracking-widest block">{t.contactFormMsg}</label>
                     <textarea
+                      name="message"
                       required
                       rows={4}
                       placeholder="Write your message here..."
@@ -316,19 +270,16 @@ export default function Contact({ lang }: ContactProps) {
                       onChange={(e) => setMessage(e.target.value)}
                       className="w-full bg-white border border-slate-300 rounded py-2 px-3 text-sm focus:outline-none focus:ring-1 focus:ring-gold-500 focus:border-gold-500 resize-none"
                     />
+                    <ValidationError prefix="Message" field="message" errors={formspreeState.errors} className="text-xs text-red-500" />
                   </div>
-
-                  {status === 'error' && (
-                    <p className="text-xs text-red-500 font-semibold">{t.contactFormError}</p>
-                  )}
 
                   {/* Submit button */}
                   <button
                     type="submit"
-                    disabled={status === 'submitting'}
+                    disabled={formspreeState.submitting}
                     className="w-full bg-gold-500 hover:bg-gold-600 text-navy-500 font-bold py-3 rounded transition-all shadow hover:shadow-md text-xs uppercase tracking-widest flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50"
                   >
-                    {status === 'submitting' ? (
+                    {formspreeState.submitting ? (
                       <span>Sending...</span>
                     ) : (
                       <>

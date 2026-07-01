@@ -85,3 +85,14 @@ export interface EmailLog {
   sentAt: string;
   status: 'sent' | 'failed';
 }
+
+// Dynamic image version cache-buster generated once per bundle load (guarantees freshness on reload)
+export const IMAGE_VERSION = Date.now().toString();
+
+export const getImageUrl = (p: string): string => {
+  if (!p) return '';
+  const cleanPath = p.split('?')[0];
+  const relativePath = cleanPath.startsWith('/') ? cleanPath.substring(1) : cleanPath;
+  return `/${relativePath}?v=${IMAGE_VERSION}`;
+};
+

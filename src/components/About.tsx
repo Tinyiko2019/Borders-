@@ -7,7 +7,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Landmark, ShieldAlert, BadgeCheck, Users, HelpCircle } from 'lucide-react';
 import { Language, translations } from '../translations';
-import combinedFlags from '../assets/images/combined_flags.jpg';
+import { getImageUrl } from '../types';
 
 interface AboutProps {
   lang: Language;
@@ -44,32 +44,59 @@ export default function About({ lang }: AboutProps) {
           
           {/* Left Side: Images & Flag Representation */}
           <div className="lg:col-span-5 flex flex-col space-y-6">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.8 }}
-              className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-xl bg-slate-100"
-            >
-              <div className="aspect-[4/3] w-full">
-                <img 
-                  src={combinedFlags} 
-                  alt="South Africa and Mozambique Flags Combined" 
-                  className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-navy-950/60 to-transparent"></div>
-              
-              <div className="absolute bottom-6 left-6 right-6 text-white">
-                <p className="text-xs uppercase font-bold text-gold-400 tracking-wider mb-1">
-                  Connecting Nations
-                </p>
-                <h4 className="text-lg font-bold leading-tight font-display">
-                  South Africa & Mozambique Unified Cover
-                </h4>
-              </div>
-            </motion.div>
+            <div className="grid grid-cols-2 gap-4">
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: '-100px' }}
+                transition={{ duration: 0.8 }}
+                className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-lg bg-slate-100"
+              >
+                <div className="aspect-[4/5] w-full">
+                  <img 
+                    src={getImageUrl('/combined_flags.jpg')} 
+                    alt="South Africa and Mozambique Flags Combined" 
+                    className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-navy-950/70 to-transparent"></div>
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                  <p className="text-[10px] uppercase font-bold text-gold-400 tracking-wider">
+                    Nations
+                  </p>
+                  <h4 className="text-xs font-bold leading-tight">
+                    SA & MZ Cover
+                  </h4>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: '-100px' }}
+                transition={{ duration: 0.8, delay: 0.1 }}
+                className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-lg bg-slate-100"
+              >
+                <div className="aspect-[4/5] w-full">
+                  <img 
+                    src={getImageUrl('/heart_resized.jpg')} 
+                    alt="Care and Compassion" 
+                    className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-navy-950/70 to-transparent"></div>
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                  <p className="text-[10px] uppercase font-bold text-gold-400 tracking-wider">
+                    Our Heart
+                  </p>
+                  <h4 className="text-xs font-bold leading-tight">
+                    Care & Dignity
+                  </h4>
+                </div>
+              </motion.div>
+            </div>
 
             {/* Micro stats banner for credibility */}
             <div className="grid grid-cols-3 gap-4 bg-navy-50 p-5 rounded-2xl border border-navy-100 shadow-sm">

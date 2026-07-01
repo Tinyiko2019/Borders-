@@ -1,0 +1,29 @@
+DirectoryIndex index.html index.php
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Rewrite /api/contact to /api/contact.php
+  RewriteRule ^api/contact$ api/contact.php [L,QSA]
+  
+  # Rewrite /api/apply to /api/apply.php
+  RewriteRule ^api/apply$ api/apply.php [L,QSA]
+  
+  # Rewrite /api/applications to /api/applications.php
+  RewriteRule ^api/applications$ api/applications.php [L,QSA]
+  
+  # Rewrite /api/applications/([^/]+)/status to /api/update_status.php?id=$1 [L,QSA]
+  RewriteRule ^api/applications/([^/]+)/status$ api/update_status.php?id=$1 [L,QSA]
+  
+  # Rewrite /api/messages to /api/messages.php
+  RewriteRule ^api/messages$ api/messages.php [L,QSA]
+  
+  # Rewrite /api/email-logs to /api/email_logs.php
+  RewriteRule ^api/email-logs$ api/email_logs.php [L,QSA]
+
+  # Client-side React Router Fallback
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>

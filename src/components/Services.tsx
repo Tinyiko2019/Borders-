@@ -7,11 +7,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { ShieldCheck, Truck, MapPin, HeartHandshake, Award } from 'lucide-react';
 import { Language, translations } from '../translations';
-import funeralHearse from '../assets/images/funeral_hearse.jpg';
-import sickTransport from '../assets/images/sick_transport.jpg';
-import badgesGrid from '../assets/images/badges_grid.jpg';
-import routeMap from '../assets/images/route_map.jpg';
-import familyMinibus from '../assets/images/family_minibus.jpg';
+import { getImageUrl } from '../types';
 
 interface ServicesProps {
   lang: Language;
@@ -25,35 +21,35 @@ export default function Services({ lang }: ServicesProps) {
       id: 'funeral',
       title: t.serviceFuneral,
       description: t.serviceFuneralDesc,
-      image: funeralHearse, // Mercedes hearse (image_5.png)
+      image: '/funeral_hearse.jpg?v=5', // Mercedes hearse (image_5.png)
       icon: <Truck className="w-5 h-5 text-gold-400" />
     },
     {
       id: 'sick',
       title: t.serviceSick,
       description: t.serviceSickDesc,
-      image: sickTransport, // Sick person transport support (image_7.png)
+      image: '/sick_transport.jpg?v=5', // Sick person transport support (image_7.png)
       icon: <HeartHandshake className="w-5 h-5 text-gold-400" />
     },
     {
       id: 'recovery',
       title: t.serviceRecovery,
       description: t.serviceRecoveryDesc,
-      image: badgesGrid, // Icons and badges grid (image_8.png)
+      image: '/badges_grid.jpg?v=5', // Icons and badges grid (image_8.png)
       icon: <Award className="w-5 h-5 text-gold-400" />
     },
     {
       id: 'border',
       title: t.serviceBorder,
       description: t.serviceBorderDesc,
-      image: routeMap, // South Africa to Mozambique route map (image_2.png)
+      image: '/route_map.jpg?v=5', // South Africa to Mozambique route map (image_2.png)
       icon: <MapPin className="w-5 h-5 text-gold-400" />
     },
     {
       id: 'family',
       title: t.serviceFamily,
       description: t.serviceFamilyDesc,
-      image: familyMinibus, // Family Toyota minibus (image_6.png)
+      image: '/family_minibus.jpg?v=5', // Family Toyota minibus (image_6.png)
       icon: <Truck className="w-5 h-5 text-gold-400" />
     }
   ];
@@ -99,7 +95,7 @@ export default function Services({ lang }: ServicesProps) {
                 {/* Image Section */}
                 <div className="relative aspect-[16/10] overflow-hidden bg-navy-950">
                   <img
-                    src={service.image}
+                    src={getImageUrl(service.image)}
                     alt={service.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                     referrerPolicy="no-referrer"
