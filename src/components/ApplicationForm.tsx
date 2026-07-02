@@ -166,11 +166,13 @@ export default function ApplicationForm({ lang, selectedPlanId, onResetPlan, onN
                   <div>Bank:</div>
                   <div className="font-semibold text-navy-900">First National Bank (FNB)</div>
                   <div>Account Holder:</div>
-                  <div className="font-semibold text-navy-900">Care Beyond Borders</div>
+                  <div className="font-semibold text-navy-900">CARE BEYOND BORDERS (PTY) LTD</div>
                   <div>Account Number:</div>
-                  <div className="font-semibold text-navy-900">62910485302</div>
+                  <div className="font-semibold text-navy-900">63215193416</div>
+                  <div>Branch Name:</div>
+                  <div className="font-semibold text-navy-900">RANDBURG COMMERCIAL SUITE</div>
                   <div>Branch Code:</div>
-                  <div className="font-semibold text-navy-900">250655</div>
+                  <div className="font-semibold text-navy-900">254005</div>
                 </div>
               </div>
 

@@ -32,6 +32,19 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 // Always serve public assets directly
 app.use(express.static(path.join(process.cwd(), 'public')));
 
+// Explicit route to download the production build zip file
+app.get('/download-zip', (req, res) => {
+  const zipPath = path.join(process.cwd(), 'public', 'dist.zip');
+  if (fs.existsSync(zipPath)) {
+    return res.download(zipPath, 'dist.zip');
+  }
+  const fallbackPath = path.join(process.cwd(), 'dist', 'dist.zip');
+  if (fs.existsSync(fallbackPath)) {
+    return res.download(fallbackPath, 'dist.zip');
+  }
+  res.status(404).send('dist.zip has not been generated yet. Please run build script first.');
+});
+
 // Data file paths for persistence
 const DATA_DIR = path.join(process.cwd(), 'data');
 const APPLICATIONS_FILE = path.join(DATA_DIR, 'applications.json');
